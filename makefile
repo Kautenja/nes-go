@@ -3,4 +3,5 @@
 compile:
 	cd nes && scons
 	mv nes/lib_nes_env.so .
-	go build NESgo.go
+	mkdir -p build
+	cd build && go build ../NESgo.go
