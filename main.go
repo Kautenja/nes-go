@@ -9,7 +9,6 @@ import (
     "time"
     "bytes"
     "image"
-    // "os"
     "image/png"
 );
 
@@ -70,20 +69,6 @@ func ConnWs(w http.ResponseWriter, r *http.Request) {
         // Compress the screen into a PNG container.
 		screenCompressed := new(bytes.Buffer)
 		png.Encode(screenCompressed, img)
-
-		// f, err := os.Create("outimage.png")
-		// if err != nil {
-		//     // Handle error
-		// }
-		// defer f.Close()
-
-		// // Encode to `PNG` with `DefaultCompression` level
-		// // then save to file
-		// err = png.Encode(f, img)
-		// if err != nil {
-		//     // Handle error
-		// }
-
         // Convert the PNG image to a compressed base64 string to serve.
         str := base64.StdEncoding.EncodeToString(screenCompressed.Bytes())
         // Set the based64 image on the packet to send to the front-end
