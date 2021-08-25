@@ -20,7 +20,7 @@ ws.onopen = function() {
 ws.onmessage = function(e) {
     console.log("[onmessage] receive message.");
     var res = JSON.parse(e.data);
-    $("#image").attr("src", "data:image/jpeg;base64," + res["img64"]);
+    $("#image").attr("src", "data:image/png;base64," + res["img64"]);
 }
 
 ws.onclose = function(e) {
