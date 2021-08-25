@@ -13,20 +13,20 @@ import "unsafe"
 
 // @brief An NES emulator instance.
 type Emulator struct {
-	/// The path to the ROM file to load into the emulator
-	path string
-	/// A pointer to the emulator instance
-	instance unsafe.Pointer
-	/// The controller for player 1
-	player1 *C.char
-	/// The controller for player 2
-	player2 *C.char
-	/// The pointer to the underlying contiguous RAM buffer for querying pixels
-	screen *C.char
-	/// The screen buffer of 32-bit BGRx pixels
-	pixels []byte
-	/// the underlying RAM buffer
-	ram *C.char
+    /// The path to the ROM file to load into the emulator
+    path string
+    /// A pointer to the emulator instance
+    instance unsafe.Pointer
+    /// The controller for player 1
+    player1 *C.char
+    /// The controller for player 2
+    player2 *C.char
+    /// The pointer to the underlying contiguous RAM buffer for querying pixels
+    screen *C.char
+    /// The screen buffer of 32-bit BGRx pixels
+    pixels []byte
+    /// the underlying RAM buffer
+    ram *C.char
 }
 
 // @brief Load a ROM at the given path.
@@ -34,22 +34,22 @@ type Emulator struct {
 // @returns a new emulator instance with the loaded ROM
 //
 func load(path string) Emulator {
-	// Initialize an emulator structure and assign the path.
-	var emulator Emulator
-	emulator.path = path
-	// Create an NES emulator instance for the given ROM file and store the
-	// pointer into the instance.
-	emulator.instance = C.Initialize(C.CString(path))
-	// Get pointers to the controller buffers.
-	emulator.player1 = C.Controller(emulator.instance, 0)
-	emulator.player2 = C.Controller(emulator.instance, 1)
-	// Create a pointer to the underlying screen buffer.
-	emulator.screen = C.Screen(emulator.instance)
-	emulator.pixels = C.GoBytes(unsafe.Pointer(&emulator.screen), C.Width() * C.Height())
-	// Get a reference to the RAM buffer.
-	emulator.ram = C.Memory(emulator.instance)
+    // Initialize an emulator structure and assign the path.
+    var emulator Emulator
+    emulator.path = path
+    // Create an NES emulator instance for the given ROM file and store the
+    // pointer into the instance.
+    emulator.instance = C.Initialize(C.CString(path))
+    // Get pointers to the controller buffers.
+    emulator.player1 = C.Controller(emulator.instance, 0)
+    emulator.player2 = C.Controller(emulator.instance, 1)
+    // Create a pointer to the underlying screen buffer.
+    emulator.screen = C.Screen(emulator.instance)
+    emulator.pixels = C.GoBytes(unsafe.Pointer(&emulator.screen), C.Width() * C.Height())
+    // Get a reference to the RAM buffer.
+    emulator.ram = C.Memory(emulator.instance)
 
-	return emulator
+    return emulator
 }
 
 // @brief Reset the emulator, i.e., like hitting the reset button on the NES.
@@ -78,10 +78,10 @@ func restore(emulator Emulator) { C.Restore(emulator.instance) }
 func close(emulator Emulator) { C.Close(emulator.instance) }
 
 func main() {
-	emulator := load("smb1.nes")
-	reset(emulator)
-	step(emulator)
-	backup(emulator)
-	restore(emulator)
-	close(emulator)
+    emulator := load("smb1.nes")
+    reset(emulator)
+    step(emulator)
+    backup(emulator)
+    restore(emulator)
+    close(emulator)
 }
