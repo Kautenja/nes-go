@@ -72,7 +72,7 @@ extern "C" {
         emu->backup();
     }
 
-    /// Create a deep copy (i.e., a clone) of the given emulator
+    /// Restore from a deep copy (i.e., a clone) of the given emulator
     EXP void Restore(NES::Emulator* emu) {
         emu->restore();
     }
