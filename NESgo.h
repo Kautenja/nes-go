@@ -1,0 +1,11 @@
+extern int Width();
+extern int Height();
+extern void* Initialize(char* path);
+extern char* Controller(void* emu, int port);
+extern char* Screen(void* emu);
+extern char* Memory(void* emu);
+extern void Reset(void* emu);
+extern void Step(void* emu);
+extern void Backup(void* emu);
+extern void Restore(void* emu);
+extern void Close(void* emu);
