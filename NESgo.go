@@ -11,6 +11,7 @@ package main
 import "C"
 import "unsafe"
 
+// @brief An NES emulator instance.
 type Emulator struct {
 	/// The path to the ROM file to load into the emulator
 	path string
@@ -28,6 +29,10 @@ type Emulator struct {
 	ram *C.char
 }
 
+// @brief Load a ROM at the given path.
+// @param path the path to the ROM file to load
+// @returns a new emulator instance with the loaded ROM
+//
 func load(path string) Emulator {
 	// Initialize an emulator structure and assign the path.
 	var emulator Emulator
@@ -47,25 +52,30 @@ func load(path string) Emulator {
 	return emulator
 }
 
-func reset(emulator Emulator) {
-	C.Reset(emulator.instance)
-}
+// @brief Reset the emulator, i.e., like hitting the reset button on the NES.
+// @param emulator the emulator to reset
+//
+func reset(emulator Emulator) { C.Reset(emulator.instance) }
 
-func step(emulator Emulator) {
-	C.Step(emulator.instance)
-}
+// @brief Step the emulator forward a single video frame.
+// @param emulator the emulator to reset
+//
+func step(emulator Emulator) { C.Step(emulator.instance) }
 
-func backup(emulator Emulator) {
-	C.Backup(emulator.instance)
-}
+// @brief Backup the state of the emulator.
+// @param emulator the emulator to reset
+//
+func backup(emulator Emulator) { C.Backup(emulator.instance) }
 
-func restore(emulator Emulator) {
-	C.Restore(emulator.instance)
-}
+// @brief Restore the state of the emulator from a backup.
+// @param emulator the emulator to reset
+//
+func restore(emulator Emulator) { C.Restore(emulator.instance) }
 
-func close(emulator Emulator) {
-	C.Close(emulator.instance)
-}
+// @brief Close the emulator. The struct is deferred past this point.
+// @param emulator the emulator to reset
+//
+func close(emulator Emulator) { C.Close(emulator.instance) }
 
 func main() {
 	emulator := load("smb1.nes")
