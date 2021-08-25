@@ -6,6 +6,6 @@ compileC:
 
 compileGo:
 	mkdir -p build
-	cd build && go build ../main.go
+	cd build && go build ../*.go
 
 compile: compileC compileGo
