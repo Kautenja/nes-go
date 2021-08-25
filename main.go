@@ -1,24 +1,15 @@
 package main
 
-// func main() {
-//     emulator := load("smb1.nes")
-
-//     reset(emulator)
-//     step(emulator)
-//     backup(emulator)
-//     restore(emulator)
-//     close(emulator)
-// }
-
 import (
     "github.com/gorilla/websocket"
     "net/http"
     "log"
-    "strings"
     "fmt"
     "encoding/base64"
     "time"
-    "io/ioutil"
+    "bytes"
+    "image"
+    "image/png"
 );
 
 func main() {
@@ -31,19 +22,21 @@ func main() {
 
 func ConnWs(w http.ResponseWriter, r *http.Request) {
     ws, err := websocket.Upgrade(w, r, nil, 1024, 1024)
-    if _, ok := err.(websocket.HandshakeError); ok {
+    _, ok := err.(websocket.HandshakeError)
+    if ok {
         http.Error(w, "Not a websocket handshake", 400)
-            return
+        return
     } else if err != nil {
         log.Println(err)
-            return
+        return
     }
 
-    var img64 [] byte
+    emulator := load("smb1.nes")
+    reset(emulator)
 
     res := map[string]interface{}{}
-    for {
-        if err = ws.ReadJSON(&res); err != nil {
+    	err = ws.ReadJSON(&res)
+        if err != nil {
             if err.Error() == "EOF" {
                 return
             }
@@ -58,22 +51,22 @@ func ConnWs(w http.ResponseWriter, r *http.Request) {
         res["a"] = "a"
         log.Println(res)
 
-        for {
-            files, _ := ioutil.ReadDir("./images");
-            for _, f := range files {
-            	if !strings.Contains(f.Name(), "jpg") { continue }
-                img64, _ = ioutil.ReadFile("./images/" + f.Name())
-                str := base64.StdEncoding.EncodeToString(img64)
-                res["img64"] = str
+    for {
+	    step(emulator)
 
-                if err = ws.WriteJSON(&res); err != nil {
-                    fmt.Println("watch dir - Write : " + err.Error())
-                    //return
-                }
-                time.Sleep(1000 * time.Millisecond);
-            }
-            time.Sleep(1000 * time.Millisecond);
+	    img := image.NewRGBA(image.Rect(0, 0, screen_width(), screen_height()))
+		img.Pix = pixels(emulator)
+		buf := new(bytes.Buffer)
+		png.Encode(buf, img)
+
+        str := base64.StdEncoding.EncodeToString(buf.Bytes())
+        res["img64"] = str
+
+        err = ws.WriteJSON(&res)
+        if err != nil {
+            fmt.Println("watch dir - Write : " + err.Error())
         }
+        time.Sleep(50 * time.Millisecond);
     }
 }
 
