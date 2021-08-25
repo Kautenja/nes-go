@@ -60,7 +60,7 @@ func screen_width() int { return int(C.Width()) }
 // @param emulator the emulator to get the pixels
 //
 func pixels(emulator Emulator) []byte {
-   return C.GoBytes(unsafe.Pointer(&emulator.screen), 4 * C.Width() * C.Height())
+   return C.GoBytes(unsafe.Pointer(emulator.screen), 4 * C.Width() * C.Height())
 }
 
 // @brief Reset the emulator, i.e., like hitting the reset button on the NES.
