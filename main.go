@@ -61,7 +61,12 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         // TODO: can this loop be replaced with an atomic switch that ignores
         // the alpha channel?
         // TODO: is there an atomic way to specify BGR instead of RGB?
-        for i := 3; i < 240 * 256 * 4; i += 4 { img.Pix[i] = 255 }
+        for i := 0; i < 240 * 256 * 4; i += 4 {
+            // Swap from BGR to RGB
+            img.Pix[i + 0], img.Pix[i + 2] = img.Pix[i + 2], img.Pix[i + 0]
+            // set alpha to max value
+            img.Pix[i + 3] = 255
+        }
         // Compress the screen into a PNG container.
 		screenCompressed := new(bytes.Buffer)
 		png.Encode(screenCompressed, img)
