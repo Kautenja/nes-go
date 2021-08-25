@@ -9,6 +9,7 @@ import (
     "time"
     "bytes"
     "image"
+    // "os"
     "image/png"
 );
 
@@ -58,6 +59,19 @@ func ConnWs(w http.ResponseWriter, r *http.Request) {
 		img.Pix = pixels(emulator)
 		buf := new(bytes.Buffer)
 		png.Encode(buf, img)
+
+		// f, err := os.Create("outimage.png")
+		// if err != nil {
+		//     // Handle error
+		// }
+		// defer f.Close()
+
+		// // Encode to `PNG` with `DefaultCompression` level
+		// // then save to file
+		// err = png.Encode(f, img)
+		// if err != nil {
+		//     // Handle error
+		// }
 
         str := base64.StdEncoding.EncodeToString(buf.Bytes())
         res["img64"] = str
