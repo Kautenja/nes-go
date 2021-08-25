@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef NES_EMULATOR_H_
-#define NES_EMULATOR_H_
+#ifndef NESGO_H_
+#define NESGO_H_
 
 /// Return the width of the NES.
 extern int Width();
@@ -51,4 +51,4 @@ extern void Restore(void*);
 /// Close the emulator, i.e., purge it from memory
 extern void Close(void*);
 
-#endif  // NES_EMULATOR_H_
+#endif  // NESGO_H_
