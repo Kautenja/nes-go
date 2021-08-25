@@ -23,8 +23,6 @@ type Emulator struct {
     player2 *C.char
     /// The pointer to the underlying contiguous RAM buffer for querying pixels
     screen *C.char
-    /// The screen buffer of 32-bit BGRx pixels
-    pixels []byte
     /// the underlying RAM buffer
     ram *C.char
 }
@@ -45,11 +43,24 @@ func load(path string) Emulator {
     emulator.player2 = C.Controller(emulator.instance, 1)
     // Create a pointer to the underlying screen buffer.
     emulator.screen = C.Screen(emulator.instance)
-    emulator.pixels = C.GoBytes(unsafe.Pointer(&emulator.screen), C.Width() * C.Height())
+    // emulator.pixels = C.GoBytes(unsafe.Pointer(&emulator.screen), 4 * C.Width() * C.Height())
     // Get a reference to the RAM buffer.
     emulator.ram = C.Memory(emulator.instance)
 
     return emulator
+}
+
+// @brief Return the number of vertical pixels on the screen.
+func screen_height() int { return int(C.Height()) }
+
+// @brief Return the number of horizontal pixels on the screen.
+func screen_width() int { return int(C.Width()) }
+
+// @brief Return the pixels of the screen.
+// @param emulator the emulator to get the pixels
+//
+func pixels(emulator Emulator) []byte {
+   return C.GoBytes(unsafe.Pointer(&emulator.screen), 4 * C.Width() * C.Height())
 }
 
 // @brief Reset the emulator, i.e., like hitting the reset button on the NES.
@@ -58,21 +69,21 @@ func load(path string) Emulator {
 func reset(emulator Emulator) { C.Reset(emulator.instance) }
 
 // @brief Step the emulator forward a single video frame.
-// @param emulator the emulator to reset
+// @param emulator the emulator to step
 //
 func step(emulator Emulator) { C.Step(emulator.instance) }
 
 // @brief Backup the state of the emulator.
-// @param emulator the emulator to reset
+// @param emulator the emulator to backup
 //
 func backup(emulator Emulator) { C.Backup(emulator.instance) }
 
 // @brief Restore the state of the emulator from a backup.
-// @param emulator the emulator to reset
+// @param emulator the emulator to restore
 //
 func restore(emulator Emulator) { C.Restore(emulator.instance) }
 
 // @brief Close the emulator. The struct is deferred past this point.
-// @param emulator the emulator to reset
+// @param emulator the emulator to close
 //
 func close(emulator Emulator) { C.Close(emulator.instance) }
