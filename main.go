@@ -40,7 +40,7 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         if err.Error() == "unexpected EOF" {
             return
         }
-        print("Read : " + err.Error())
+        log.Fatal("Read : " + err.Error())
         return
     }
 
@@ -67,11 +67,11 @@ func screen(writer http.ResponseWriter, request *http.Request) {
 		png.Encode(screenCompressed, img)
         // Convert the PNG image to a compressed base64 string to serve.
         str := base64.StdEncoding.EncodeToString(screenCompressed.Bytes())
-        // Set the based64 image on the packet to send to the front-end
+        // Set the base64 image on the packet to send to the front-end
         response["img64"] = str
         err = ws.WriteJSON(&response)
         if err != nil {  // Handle the optional error
-            print("watch dir - Write : " + err.Error())
+            log.Fatal("Screen Write : " + err.Error())
         }
         // Sleep to keep the server's tick-rate within NES specifications. The
         // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
@@ -87,7 +87,7 @@ func main() {
     http.HandleFunc("/screen/", screen)
     // Start the server and handle any error that occurs
     err := http.ListenAndServe(":9090", nil)
-    if err != nil {
+    if err != nil {  // Server failed to launch, report an error and terminate.
         log.Fatal("ListenAndServe: ", err)
     }
 }
