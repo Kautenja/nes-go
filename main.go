@@ -4,7 +4,6 @@ import (
     "github.com/gorilla/websocket"
     "net/http"
     "log"
-    "fmt"
     "encoding/base64"
     "time"
     "bytes"
@@ -20,7 +19,7 @@ func screen(writer http.ResponseWriter, request *http.Request) {
     ws, err := websocket.Upgrade(writer, request, nil, 1024, 1024)
     _, ok := err.(websocket.HandshakeError)
     if ok {
-        http.Error(writer, "Not a websocket handshake", 400)
+        http.Error(writer, "This end-point expects a WebSocket handshake", 400)
         return
     } else if err != nil {
         log.Println(err)
@@ -36,11 +35,12 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         if err.Error() == "EOF" {
             return
         }
-        // ErrShortWrite means a write accepted fewer bytes than requested then failed to return an explicit error.
+        // ErrShortWrite means a write accepted fewer bytes than requested
+        // then failed to return an explicit error.
         if err.Error() == "unexpected EOF" {
             return
         }
-        fmt.Println("Read : " + err.Error())
+        print("Read : " + err.Error())
         return
     }
 
@@ -71,7 +71,7 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         response["img64"] = str
         err = ws.WriteJSON(&response)
         if err != nil {  // Handle the optional error
-            fmt.Println("watch dir - Write : " + err.Error())
+            print("watch dir - Write : " + err.Error())
         }
         // Sleep to keep the server's tick-rate within NES specifications. The
         // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
