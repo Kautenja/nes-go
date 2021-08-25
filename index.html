@@ -8,11 +8,8 @@ var url = "ws://localhost:9090/screen/";
 ws = new WebSocket(url);
 
 ws.onopen = function() {
-  console.log("[onopen] connect ws uri.");
-  var data = {
-    "Action" : "requireConnect"
-  };
-  ws.send(JSON.stringify(data));
+    console.log("[onopen] connect ws uri.");
+    ws.send(JSON.stringify({"Action" : "requireConnect"}));
 }
 
 ws.onmessage = function(e) {
