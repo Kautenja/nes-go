@@ -46,6 +46,8 @@ func load(path string) Emulator {
     // emulator.pixels = C.GoBytes(unsafe.Pointer(&emulator.screen), 4 * C.Width() * C.Height())
     // Get a reference to the RAM buffer.
     emulator.ram = C.Memory(emulator.instance)
+    // Reset the emulator to start the emulation.
+    C.Reset(emulator.instance)
 
     return emulator
 }

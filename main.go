@@ -12,44 +12,40 @@ import (
     "image/png"
 );
 
-func main() {
-    http.HandleFunc("/screen/", ConnWs)
-    err := http.ListenAndServe(":9090", nil)
-    if err != nil {
-        log.Fatal("ListenAndServe: ", err)
-    }
-}
-
-func ConnWs(w http.ResponseWriter, r *http.Request) {
-    ws, err := websocket.Upgrade(w, r, nil, 1024, 1024)
+// @brief Handle a request for the screen endpoint
+// @param writer the HTTP response writer for sending data
+// @param request the HTTP request that was received at the endpoint
+//
+func screen(writer http.ResponseWriter, request *http.Request) {
+    ws, err := websocket.Upgrade(writer, request, nil, 1024, 1024)
     _, ok := err.(websocket.HandshakeError)
     if ok {
-        http.Error(w, "Not a websocket handshake", 400)
+        http.Error(writer, "Not a websocket handshake", 400)
         return
     } else if err != nil {
         log.Println(err)
         return
     }
 
+    // Create an emulator instance for this connection.
     emulator := load("smb1.nes")
-    reset(emulator)
 
-    res := map[string]interface{}{}
-    	err = ws.ReadJSON(&res)
-        if err != nil {
-            if err.Error() == "EOF" {
-                return
-            }
-            // ErrShortWrite means a write accepted fewer bytes than requested then failed to return an explicit error.
-            if err.Error() == "unexpected EOF" {
-                return
-            }
-            fmt.Println("Read : " + err.Error())
+    response := map[string]interface{}{}
+    err = ws.ReadJSON(&response)
+    if err != nil {
+        if err.Error() == "EOF" {
             return
         }
+        // ErrShortWrite means a write accepted fewer bytes than requested then failed to return an explicit error.
+        if err.Error() == "unexpected EOF" {
+            return
+        }
+        fmt.Println("Read : " + err.Error())
+        return
+    }
 
-        res["a"] = "a"
-        log.Println(res)
+    response["a"] = "a"
+    log.Println(response)
 
     // Create a placeholder image for passing pixels to the PNG encoder.
     img := image.NewRGBA(image.Rect(0, 0, screen_width(), screen_height()))
@@ -72,13 +68,26 @@ func ConnWs(w http.ResponseWriter, r *http.Request) {
         // Convert the PNG image to a compressed base64 string to serve.
         str := base64.StdEncoding.EncodeToString(screenCompressed.Bytes())
         // Set the based64 image on the packet to send to the front-end
-        res["img64"] = str
-        err = ws.WriteJSON(&res)
+        response["img64"] = str
+        err = ws.WriteJSON(&response)
         if err != nil {  // Handle the optional error
             fmt.Println("watch dir - Write : " + err.Error())
         }
-        // Sleep to keep the server's tick-rate within NES specifications.
+        // Sleep to keep the server's tick-rate within NES specifications. The
+        // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
+        // the network stack. 5ms works well in practice, but this will need to
+        // be tuned / refactored to lock the tick rate to 60Hz properly.
         time.Sleep(5 * time.Millisecond);
     }
 }
 
+// @brief The main entry point.
+func main() {
+    // Setup the functional callbacks for the endpoints
+    http.HandleFunc("/screen/", screen)
+    // Start the server and handle any error that occurs
+    err := http.ListenAndServe(":9090", nil)
+    if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+    }
+}
