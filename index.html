@@ -2,30 +2,8 @@
 
 <head>
     <title>NES-go</title>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script type="text/javascript">
-var url = "ws://localhost:9090/screen/";
-ws = new WebSocket(url);
-
-ws.onopen = function() {
-    console.log("[onopen] connect ws uri.");
-    ws.send(JSON.stringify({"Action" : "requireConnect"}));
-}
-
-ws.onmessage = function(e) {
-    console.log("[onmessage] receive message.");
-    var res = JSON.parse(e.data);
-    $("#image").attr("src", "data:image/png;base64," + res["img64"]);
-}
-
-ws.onclose = function(e) {
-    console.log("[onclose] connection closed (" + e.code + ")");
-}
-
-ws.onerror = function (e) {
-    console.log("[onerror] error!");
-}
-</script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="./script.js"></script>
 </head>
 
 <body>
