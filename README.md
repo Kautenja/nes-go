@@ -1,4 +1,6 @@
-# NES-Go
+<p align="center">
+<img src="graphics/NESGo.svg" alt="NES-Go"/>
+</p>
 
 This repository implements an NES emulator in GoLang. The front-end is provided
 through a web interface using WebSockets to communicate with the GoLang
