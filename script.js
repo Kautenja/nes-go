@@ -1,49 +1,53 @@
 
+// Create a web socket connection to the back-end game engine.
 ws = new WebSocket("ws://localhost:9090/screen/");
 
+// Create a placeholder for the controller bitmap
+var controller = 0
+
 ws.onopen = function() {
-    console.log("[onopen] connect ws uri.");
+    console.log("[onopen] connect WebSocket URI.");
     ws.send(JSON.stringify({"Action" : "requireConnect"}));
 }
 
-ws.onmessage = function(e) {
-    console.log("[onmessage] receive message.");
-    var res = JSON.parse(e.data);
+ws.onmessage = function(message) {
+    // console.log("[onmessage] received message.");
+    var res = JSON.parse(message.data);
     $("#image").attr("src", "data:image/png;base64," + res["img64"]);
 }
 
-ws.onclose = function(e) {
-    console.log("[onclose] connection closed (" + e.code + ")");
+ws.onclose = function(message) {
+    console.log("[onclose] connection closed (" + message.code + ")");
 }
 
-ws.onerror = function (e) {
+ws.onerror = function (message) {
     console.log("[onerror] error!");
 }
 
-// https://keycode.info
+// Add an event listener for detecting key-down events.
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
-        case "W".charCodeAt(0): alert('"W" was pressed'); break;
-        case "A".charCodeAt(0): alert('"A" was pressed'); break;
-        case "S".charCodeAt(0): alert('"S" was pressed'); break;
-        case "D".charCodeAt(0): alert('"D" was pressed'); break;
-        case "O".charCodeAt(0): alert('"O" was pressed'); break;
-        case "P".charCodeAt(0): alert('"P" was pressed'); break;
-        case 13:                alert('"enter" was pressed'); break;
-        case 32:                alert('"space" was pressed'); break;
+        case "D".charCodeAt(0): controller |= 0b10000000; break;
+        case "A".charCodeAt(0): controller |= 0b01000000; break;
+        case "S".charCodeAt(0): controller |= 0b00100000; break;
+        case "W".charCodeAt(0): controller |= 0b00010000; break;
+        case 13:                controller |= 0b00001000; break;
+        case 32:                controller |= 0b00000100; break;
+        case "P".charCodeAt(0): controller |= 0b00000010; break;
+        case "O".charCodeAt(0): controller |= 0b00000001; break;
     }
 });
 
-// https://keycode.info
+// Add an event listener for detecting key-up events.
 document.addEventListener('keyup', function(event) {
     switch (event.keyCode) {
-        case "W".charCodeAt(0): alert('"W" was released'); break;
-        case "A".charCodeAt(0): alert('"A" was released'); break;
-        case "S".charCodeAt(0): alert('"S" was released'); break;
-        case "D".charCodeAt(0): alert('"D" was released'); break;
-        case "O".charCodeAt(0): alert('"O" was released'); break;
-        case "P".charCodeAt(0): alert('"P" was released'); break;
-        case 13:                alert('"enter" was released'); break;
-        case 32:                alert('"space" was released'); break;
+        case "D".charCodeAt(0): controller &= 0xff - 0b10000000; break;
+        case "A".charCodeAt(0): controller &= 0xff - 0b01000000; break;
+        case "S".charCodeAt(0): controller &= 0xff - 0b00100000; break;
+        case "W".charCodeAt(0): controller &= 0xff - 0b00010000; break;
+        case 13:                controller &= 0xff - 0b00001000; break;
+        case 32:                controller &= 0xff - 0b00000100; break;
+        case "P".charCodeAt(0): controller &= 0xff - 0b00000010; break;
+        case "O".charCodeAt(0): controller &= 0xff - 0b00000001; break;
     }
 });
