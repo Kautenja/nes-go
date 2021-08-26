@@ -51,6 +51,9 @@ func screen(writer http.ResponseWriter, request *http.Request) {
     img := image.NewRGBA(image.Rect(0, 0, screen_width(), screen_height()))
     // Loop infinitely to accept new connections.
     for {
+        // Get current time for calculating the response time of this render.
+        start := time.Now()
+
         // Process a graphical frame on the emulator. This call blocks and is
         // relatively long running due to the number of CPU / PPU cycles per
         // frame.
@@ -96,11 +99,16 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         controller := byte(controllerResponse["controller"].(float64))
         emulator.setPlayer1(controller)
 
-        // Sleep to keep the server's tick-rate within NES specifications. The
-        // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
-        // the network stack. 5ms works well in practice, but this will need to
-        // be tuned / refactored to lock the tick rate to 60Hz properly.
-        time.Sleep(5 * time.Millisecond);
+        // Calculate the wait time based on the delay encountered by the render
+        // 1000 * 1 / 60 calculates the time between frames in milliseconds.
+        wait := time.Duration((1000 / 60) - time.Since(start).Milliseconds())
+        if (wait > 0) {
+            // Sleep to keep the server's tick-rate within NES specifications. The
+            // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
+            // the network stack. 5ms works well in practice, but this will need to
+            // be tuned / refactored to lock the tick rate to 60Hz properly.
+            time.Sleep(wait * time.Millisecond);
+        }
     }
 }
 
