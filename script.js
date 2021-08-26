@@ -29,7 +29,8 @@ document.addEventListener('keydown', function(event) {
         case "D".charCodeAt(0): alert('"D" was pressed'); break;
         case "O".charCodeAt(0): alert('"O" was pressed'); break;
         case "P".charCodeAt(0): alert('"P" was pressed'); break;
-        case 13:                alert('"*" was pressed'); break;
+        case 13:                alert('"enter" was pressed'); break;
+        case 32:                alert('"space" was pressed'); break;
     }
 });
 
@@ -42,6 +43,7 @@ document.addEventListener('keyup', function(event) {
         case "D".charCodeAt(0): alert('"D" was released'); break;
         case "O".charCodeAt(0): alert('"O" was released'); break;
         case "P".charCodeAt(0): alert('"P" was released'); break;
-        case 13:                alert('"*" was released'); break;
+        case 13:                alert('"enter" was released'); break;
+        case 32:                alert('"space" was released'); break;
     }
 });
