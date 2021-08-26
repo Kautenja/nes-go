@@ -2,7 +2,9 @@
 // Create a web socket connection to the back-end game engine.
 ws = new WebSocket("ws://localhost:9090/screen/");
 
-// Create a placeholder for the controller bitmap
+// Create a placeholder for the 8-bit controller bitmap. This value will be
+// updated by the key-down and key-up event handlers when keys are pressed and
+// released, respectively.
 var controller = 0
 
 ws.onopen = function() {
@@ -11,9 +13,11 @@ ws.onopen = function() {
 }
 
 ws.onmessage = function(message) {
-    // console.log("[onmessage] received message.");
-    var res = JSON.parse(message.data);
-    $("#image").attr("src", "data:image/png;base64," + res["img64"]);
+    // Parse the base64 image from the JSON message.
+    var data = JSON.parse(message.data);
+    $("#image").attr("src", "data:image/png;base64," + data["img64"]);
+    // Send the controller state to the engine.
+    ws.send(JSON.stringify({"controller" : controller}));
 }
 
 ws.onclose = function(message) {

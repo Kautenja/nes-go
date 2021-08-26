@@ -78,6 +78,24 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         if err != nil {  // Handle the optional error
             log.Fatal("Screen Write : " + err.Error())
         }
+
+        // Query the response from the server to update the controller.
+        controllerResponse := map[string]interface{}{}
+        err = ws.ReadJSON(&controllerResponse)
+        if err != nil {
+            if err.Error() == "EOF" {
+                return
+            }
+            if err.Error() == "unexpected EOF" {
+                return
+            }
+            log.Fatal("Read : " + err.Error())
+            return
+        }
+        // Expect a float64 and convert to a byte to pass to the emulator.
+        controller := byte(controllerResponse["controller"].(float64))
+        player1(emulator, controller)
+
         // Sleep to keep the server's tick-rate within NES specifications. The
         // NES ran at 60Hz = 16.7ms, but there is some overhead associated with
         // the network stack. 5ms works well in practice, but this will need to

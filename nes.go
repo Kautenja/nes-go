@@ -65,6 +65,22 @@ func pixels(emulator Emulator) []byte {
    return C.GoBytes(unsafe.Pointer(emulator.screen), 4 * C.Width() * C.Height())
 }
 
+// @brief Update the controller for player 1.
+// @param emulator the emulator to update the controller of
+// @param controller the bitmap representation of the buttons that are pressed
+//
+func player1(emulator Emulator, controller byte) {
+    *emulator.player1 = C.char(controller)
+}
+
+// @brief Update the controller for player 2.
+// @param emulator the emulator to update the controller of
+// @param controller the bitmap representation of the buttons that are pressed
+//
+func player2(emulator Emulator, controller byte) {
+    *emulator.player2 = C.char(controller)
+}
+
 // @brief Reset the emulator, i.e., like hitting the reset button on the NES.
 // @param emulator the emulator to reset
 //
