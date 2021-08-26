@@ -40,3 +40,16 @@ To run the HTTP page server:
 ```shell
 make serve
 ```
+
+## Controls
+
+| Keyboard Key | NES Joypad    |
+|:-------------|:--------------|
+| W            | Up            |
+| A            | Left          |
+| S            | Down          |
+| D            | Right         |
+| O            | A             |
+| P            | B             |
+| Enter        | Start         |
+| Space        | Select        |
