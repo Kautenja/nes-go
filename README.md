@@ -31,13 +31,13 @@ make compile
 
 ### Execution
 
-To start the Go emulation server:
+To start the Go emulation server (on port `9090`):
 
 ```shell
 make run
 ```
 
-To run the HTTP page server:
+To run the HTTP page server (on port `9000`):
 
 ```shell
 make serve
