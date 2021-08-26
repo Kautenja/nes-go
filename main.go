@@ -54,9 +54,9 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         // Process a graphical frame on the emulator. This call blocks and is
         // relatively long running due to the number of CPU / PPU cycles per
         // frame.
-	    step(emulator)
+	    emulator.step()
         // Update the pixels of the image that represents the screen.
-		img.Pix = pixels(emulator)
+		img.Pix = emulator.pixels()
         // Set the alpha channel to max value (they are 0 by default).
         // TODO: can this loop be replaced with an atomic switch that ignores
         // the alpha channel?
@@ -94,7 +94,7 @@ func screen(writer http.ResponseWriter, request *http.Request) {
         }
         // Expect a float64 and convert to a byte to pass to the emulator.
         controller := byte(controllerResponse["controller"].(float64))
-        player1(emulator, controller)
+        emulator.setPlayer1(controller)
 
         // Sleep to keep the server's tick-rate within NES specifications. The
         // NES ran at 60Hz = 16.7ms, but there is some overhead associated with

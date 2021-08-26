@@ -61,7 +61,7 @@ func screen_width() int { return int(C.Width()) }
 // @brief Return the pixels of the screen.
 // @param emulator the emulator to get the pixels
 //
-func pixels(emulator Emulator) []byte {
+func (emulator *Emulator) pixels() []byte {
    return C.GoBytes(unsafe.Pointer(emulator.screen), 4 * C.Width() * C.Height())
 }
 
@@ -69,7 +69,7 @@ func pixels(emulator Emulator) []byte {
 // @param emulator the emulator to update the controller of
 // @param controller the bitmap representation of the buttons that are pressed
 //
-func player1(emulator Emulator, controller byte) {
+func (emulator *Emulator) setPlayer1(controller byte) {
     *emulator.player1 = C.char(controller)
 }
 
@@ -77,31 +77,31 @@ func player1(emulator Emulator, controller byte) {
 // @param emulator the emulator to update the controller of
 // @param controller the bitmap representation of the buttons that are pressed
 //
-func player2(emulator Emulator, controller byte) {
+func (emulator *Emulator) setPlayer2(controller byte) {
     *emulator.player2 = C.char(controller)
 }
 
 // @brief Reset the emulator, i.e., like hitting the reset button on the NES.
 // @param emulator the emulator to reset
 //
-func reset(emulator Emulator) { C.Reset(emulator.instance) }
+func reset(emulator *Emulator) { C.Reset(emulator.instance) }
 
 // @brief Step the emulator forward a single video frame.
 // @param emulator the emulator to step
 //
-func step(emulator Emulator) { C.Step(emulator.instance) }
+func (emulator *Emulator) step() { C.Step(emulator.instance) }
 
 // @brief Backup the state of the emulator.
 // @param emulator the emulator to backup
 //
-func backup(emulator Emulator) { C.Backup(emulator.instance) }
+func (emulator *Emulator) backup() { C.Backup(emulator.instance) }
 
 // @brief Restore the state of the emulator from a backup.
 // @param emulator the emulator to restore
 //
-func restore(emulator Emulator) { C.Restore(emulator.instance) }
+func (emulator *Emulator) restore() { C.Restore(emulator.instance) }
 
 // @brief Close the emulator. The struct is deferred past this point.
 // @param emulator the emulator to close
 //
-func close(emulator Emulator) { C.Close(emulator.instance) }
+func (emulator *Emulator) close() { C.Close(emulator.instance) }
