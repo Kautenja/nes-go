@@ -1,5 +1,5 @@
 <p align="center">
-<img src="graphics/NESGo.svg" alt="NES-Go"/>
+<img src="graphics/NES-Go.svg" alt="NES-Go"/>
 </p>
 
 This repository implements an NES emulator in GoLang. The front-end is provided
